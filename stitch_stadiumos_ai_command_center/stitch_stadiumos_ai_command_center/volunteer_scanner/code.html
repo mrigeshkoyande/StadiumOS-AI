@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StadiumOS AI - Volunteer Scanner</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#191c1e",
+                    "on-tertiary-fixed": "#002110",
+                    "surface-container-high": "#e6e8ea",
+                    "on-primary-fixed": "#00174c",
+                    "tertiary-fixed-dim": "#77da9f",
+                    "on-tertiary-fixed-variant": "#00522f",
+                    "surface": "#f7f9fb",
+                    "outline-variant": "#c3c6d7",
+                    "inverse-primary": "#b4c5ff",
+                    "surface-bright": "#f7f9fb",
+                    "inverse-surface": "#2d3133",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#51617e",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e0e3e5",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#737686",
+                    "surface-tint": "#1053d7",
+                    "on-secondary-fixed-variant": "#374762",
+                    "tertiary": "#005431",
+                    "background": "#f7f9fb",
+                    "on-surface-variant": "#434654",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "primary-container": "#1455d9",
+                    "primary": "#003fad",
+                    "surface-dim": "#d8dadc",
+                    "on-primary-fixed-variant": "#003da9",
+                    "primary-fixed": "#dbe1ff",
+                    "error": "#ba1a1a",
+                    "surface-container-low": "#f2f4f6",
+                    "surface-container": "#eceef0",
+                    "surface-container-highest": "#e0e3e5",
+                    "secondary-fixed": "#d5e3ff",
+                    "secondary-fixed-dim": "#b6c7e8",
+                    "on-primary": "#ffffff",
+                    "on-background": "#191c1e",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-tertiary-container": "#8cf0b3",
+                    "on-secondary-fixed": "#091c35",
+                    "on-primary-container": "#d1daff",
+                    "secondary-container": "#ccddff",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-container": "#006f42",
+                    "secondary": "#4e5f7b",
+                    "tertiary-fixed": "#93f7ba",
+                    "pitch-green": "#198754"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1440px",
+                    "unit": "8px",
+                    "panel-gap": "12px",
+                    "margin-desktop": "40px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "display-hero": ["Outfit"],
+                    "mono-data": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Outfit"],
+                    "headline-md": ["Outfit"],
+                    "headline-lg-mobile": ["Outfit"]
+            },
+            "fontSize": {
+                    "display-hero": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "mono-data": ["14px", {"lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .scanner-frame {
+            position: relative;
+            overflow: hidden;
+        }
+        .scanner-laser {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #b4c5ff;
+            box-shadow: 0 0 15px #1053d7;
+            animation: scan 2.5s infinite linear;
+        }
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        .success-overlay {
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .celebration-ball {
+            animation: kick 0.6s ease-out forwards;
+        }
+        @keyframes kick {
+            0% { transform: scale(0.5) translateY(100px); opacity: 0; }
+            50% { transform: scale(1.2) translateY(-20px); opacity: 1; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-low text-on-surface h-screen overflow-hidden flex flex-col">
+<!-- Top Navigation Anchor (Manual Implementation for Mobile Context) -->
+<header class="bg-surface/40 backdrop-blur-2xl fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-margin-mobile z-50 border-b border-white/10">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]">stadium</span>
+</div>
+<h1 class="font-display-hero text-headline-md font-bold text-on-surface">StadiumOS</h1>
+</div>
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a stadium volunteer wearing a high-visibility security vest. The background is a blurred stadium concourse with soft architectural lighting in Tournament Blue. The image has a clean, high-contrast, modern aesthetic with sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBO7YUIAh5W6ZN0DFt5Vh0z88v9oY6omXAiHyBBPCfV1IV9rGgjD3uSeoNzKar36wU1amEVXTp_8fDE6tQfVtEDw7irf-eROjIQWqskZQJbZfQZfcETjfz1uOcse0mEV27mRt5Ow6jkbYGMy1Xb9T3p5VSLIfb9i2_9dcAuRqSYusHOIkHOUz0yqNKENoEpdbTfm8ov4YXE-UN8gDk4_CkDtFqq4zqc1HZva2LujAxto3_1hMy-gAdFsid8MVfnfRLx2A_tNFYQUAN8"/>
+</div>
+</div>
+</header>
+<main class="flex-1 mt-16 p-4 flex flex-col gap-4 overflow-y-auto pb-24">
+<!-- Live QR Scanner Viewport -->
+<section class="relative w-full aspect-[3/4] bg-on-surface rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10">
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center opacity-70 grayscale-[0.2]" data-alt="A POV first-person perspective of a smartphone camera viewfinder pointing at a stadium gate entrance. The view shows a blurry crowd of fans in the background with a focus area for a QR code in the center. The lighting is bright and outdoor with a professional cinematic quality." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC7JIaoMJKH5J1i_UNk-XRHf2wwLeVPHZgpaaF63rJfuZ-RT8atYNwVXwBlACrHs8hJUwx9z5vk4B5ZR9PxWyTmShT6z8QegP1aUQA6FCqlQ-cTmaF-KzQTLdm-bLW6BgDMQt_EPpYnToyiB6brzkRnXsirvgLBqLoJtmt_-RS7c61MrKt-j44AhaMd9jQuEK4dQwI_4cFZFIB5R6cTGYwJM-IheOIP5MAUWXytRdhGgGuiLtRaD-WocIT5Xp-_pikhDKnZDfcibOIJ')"></div>
+</div>
+<!-- Scanner Overlay HUD -->
+<div class="absolute inset-0 z-10 flex flex-col items-center justify-center p-8">
+<div class="w-64 h-64 border-2 border-primary-fixed-dim/50 rounded-2xl relative flex items-center justify-center">
+<!-- Corner Brackets -->
+<div class="absolute -top-1 -left-1 w-8 h-8 border-t-4 border-l-4 border-primary-fixed rounded-tl-xl"></div>
+<div class="absolute -top-1 -right-1 w-8 h-8 border-t-4 border-r-4 border-primary-fixed rounded-tr-xl"></div>
+<div class="absolute -bottom-1 -left-1 w-8 h-8 border-b-4 border-l-4 border-primary-fixed rounded-bl-xl"></div>
+<div class="absolute -bottom-1 -right-1 w-8 h-8 border-b-4 border-r-4 border-primary-fixed rounded-br-xl"></div>
+<div class="scanner-laser"></div>
+<span class="material-symbols-outlined text-primary-fixed/30 text-6xl">qr_code_scanner</span>
+</div>
+<p class="mt-8 font-label-sm text-primary-fixed uppercase tracking-widest bg-black/40 px-4 py-1 rounded-full backdrop-blur-sm">Align Ticket QR</p>
+</div>
+<!-- Flash & Switch Toggle -->
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 z-20">
+<button class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white active:scale-90 transition-transform">
+<span class="material-symbols-outlined">flashlight_on</span>
+</button>
+<button class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white active:scale-90 transition-transform">
+<span class="material-symbols-outlined">cached</span>
+</button>
+</div>
+</section>
+<!-- Dynamic Task Assignment Card -->
+<div class="glass-panel rounded-2xl p-4 flex items-center gap-4 border-l-4 border-primary animate-pulse">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">assignment_late</span>
+</div>
+<div>
+<p class="font-label-sm text-primary uppercase">Current Task</p>
+<p class="font-body-md font-semibold text-on-surface">Assigned: Support Gate B congestion redirect.</p>
+</div>
+</div>
+<!-- Action Grid -->
+<div class="grid grid-cols-2 gap-3">
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-surface-container-high text-on-surface-variant gap-2 transition-all active:scale-95">
+<span class="material-symbols-outlined text-3xl">help_center</span>
+<span class="font-label-sm">Lookup ID</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-error-container text-on-error-container gap-2 transition-all active:scale-95" onclick="toggleIncidentModal()">
+<span class="material-symbols-outlined text-3xl">report</span>
+<span class="font-label-sm">Report Incident</span>
+</button>
+</div>
+</main>
+<!-- Navigation Shell (Bottom Bar) -->
+<nav class="fixed bottom-0 left-0 right-0 h-20 bg-surface/80 backdrop-blur-xl flex justify-around items-center px-4 pb-2 z-40">
+<div class="flex flex-col items-center gap-1 text-on-surface-variant/70">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm">Home</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-primary">
+<div class="bg-primary/10 px-4 py-1 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">qr_code_scanner</span>
+</div>
+<span class="font-label-sm font-bold">Scanner</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-on-surface-variant/70">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-sm">Map</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-on-surface-variant/70">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm">Profile</span>
+</div>
+</nav>
+<!-- VALIDATION SUCCESS STATE (HIDDEN BY DEFAULT) -->
+<div class="fixed inset-0 z-[100] bg-pitch-green flex flex-col items-center justify-center p-8 hidden" id="successOverlay">
+<div class="celebration-ball mb-8 text-white">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+</div>
+<div class="text-center text-white success-overlay">
+<h2 class="font-display-hero text-headline-lg-mobile font-bold mb-2">VALID TICKET</h2>
+<div class="bg-white/20 backdrop-blur-md rounded-3xl p-6 border border-white/30 space-y-4">
+<div class="flex justify-between items-center border-b border-white/20 pb-3">
+<span class="font-label-sm opacity-80 uppercase">Section</span>
+<span class="font-headline-md">214</span>
+</div>
+<div class="flex justify-between items-center border-b border-white/20 pb-3">
+<span class="font-label-sm opacity-80 uppercase">Gate</span>
+<span class="font-headline-md">C</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-sm opacity-80 uppercase">Seat</span>
+<span class="font-headline-md">18</span>
+</div>
+</div>
+<button class="mt-12 w-full py-4 bg-white text-pitch-green font-bold rounded-2xl shadow-xl active:scale-95 transition-transform uppercase tracking-wider" onclick="hideSuccess()">
+                Continue Scanning
+            </button>
+</div>
+<div class="absolute bottom-10 flex gap-2">
+<span class="w-2 h-2 rounded-full bg-white animate-bounce"></span>
+<span class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:0.2s]"></span>
+<span class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:0.4s]"></span>
+</div>
+</div>
+<!-- INCIDENT REPORTING MODAL (SIMPLE) -->
+<div class="fixed inset-0 z-[110] bg-on-surface/80 backdrop-blur-sm flex items-end hidden" id="incidentModal">
+<div class="w-full bg-surface rounded-t-[32px] p-8 animate-slide-up">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto mb-8"></div>
+<h3 class="font-display-hero text-headline-md mb-4 text-error">Report Incident</h3>
+<div class="space-y-4">
+<button class="w-full p-4 rounded-xl border border-outline/20 text-left flex items-center justify-between">
+<span class="font-body-md font-medium">Medical Assistance Required</span>
+<span class="material-symbols-outlined text-error">medical_services</span>
+</button>
+<button class="w-full p-4 rounded-xl border border-outline/20 text-left flex items-center justify-between">
+<span class="font-body-md font-medium">Security Intervention</span>
+<span class="material-symbols-outlined text-on-surface">security</span>
+</button>
+<button class="w-full p-4 rounded-xl border border-outline/20 text-left flex items-center justify-between">
+<span class="font-body-md font-medium">Facilities/Spill</span>
+<span class="material-symbols-outlined text-tertiary">cleaning_services</span>
+</button>
+<div class="pt-4 flex gap-4">
+<button class="flex-1 py-4 font-label-sm font-bold uppercase text-on-surface-variant" onclick="toggleIncidentModal()">Cancel</button>
+<button class="flex-[2] py-4 bg-error text-white font-bold rounded-xl shadow-lg uppercase tracking-wider">Send Alert</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+        // Simulate a successful scan after 3 seconds for demonstration
+        setTimeout(() => {
+            showSuccess();
+        }, 3000);
+
+        function showSuccess() {
+            document.getElementById('successOverlay').classList.remove('hidden');
+            // Haptic vibration simulation
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate([100, 30, 100]);
+            }
+        }
+
+        function hideSuccess() {
+            document.getElementById('successOverlay').classList.add('hidden');
+        }
+
+        function toggleIncidentModal() {
+            const modal = document.getElementById('incidentModal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Quick click trigger for manual testing of success state
+        document.querySelector('.scanner-frame')?.addEventListener('click', showSuccess);
+    </script>
+<style>
+        @keyframes slide-up {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+</body></html>

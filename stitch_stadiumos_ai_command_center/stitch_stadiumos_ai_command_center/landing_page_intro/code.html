@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StadiumOS AI | The Intelligence Layer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Outfit:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .glass-panel-heavy {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .fresnel-edge {
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 8px 32px rgba(7, 26, 51, 0.08);
+        }
+        .text-glow {
+            text-shadow: 0 0 20px rgba(0, 63, 173, 0.1);
+        }
+        @keyframes pulse-blue {
+            0%, 100% { border-color: rgba(0, 63, 173, 0.2); }
+            50% { border-color: rgba(0, 63, 173, 0.8); }
+        }
+        .ai-pulse {
+            animation: pulse-blue 3s infinite;
+        }
+        .transition-hero {
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#191c1e",
+                        "on-tertiary-fixed": "#002110",
+                        "surface-container-high": "#e6e8ea",
+                        "on-primary-fixed": "#00174c",
+                        "tertiary-fixed-dim": "#77da9f",
+                        "on-tertiary-fixed-variant": "#00522f",
+                        "surface": "#f7f9fb",
+                        "outline-variant": "#c3c6d7",
+                        "inverse-primary": "#b4c5ff",
+                        "surface-bright": "#f7f9fb",
+                        "inverse-surface": "#2d3133",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#51617e",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#737686",
+                        "surface-tint": "#1053d7",
+                        "on-secondary-fixed-variant": "#374762",
+                        "tertiary": "#005431",
+                        "background": "#f7f9fb",
+                        "on-surface-variant": "#434654",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "primary-container": "#1455d9",
+                        "primary": "#003fad",
+                        "surface-dim": "#d8dadc",
+                        "on-primary-fixed-variant": "#003da9",
+                        "primary-fixed": "#dbe1ff",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container": "#eceef0",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary-fixed": "#d5e3ff",
+                        "secondary-fixed-dim": "#b6c7e8",
+                        "on-primary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-tertiary-container": "#8cf0b3",
+                        "on-secondary-fixed": "#091c35",
+                        "on-primary-container": "#d1daff",
+                        "secondary-container": "#ccddff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#006f42",
+                        "secondary": "#4e5f7b",
+                        "tertiary-fixed": "#93f7ba"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "unit": "8px",
+                        "panel-gap": "12px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "display-hero": ["Outfit"],
+                        "mono-data": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "display-hero": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "mono-data": ["14px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- Cinematic Intro Layer -->
+<div class="fixed inset-0 z-[100] bg-white flex items-center justify-center transition-hero" id="intro-layer">
+<!-- STITCH_THREEJS_START:ANIMATION_3 class="absolute inset-0 w-full h-full" -->
+<div class="absolute inset-0 w-full h-full" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_3" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_3');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  /**
+ * StadiumOS AI Cinematic Intro Animation
+ * Technique: Tier 4 Three.js
+ * Visuals: A football moves across a clean white scene, followed by a premium
+ * abstract trophy-like geometric form that divides and reveals the intelligence layer.
+ */
+
+let scene, camera, renderer, clock;
+let football, trophyLeft, trophyRight, coreGlow;
+let animationComplete = false;
+
+function init() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+
+    const width = container.clientWidth || window.innerWidth;
+    const height = container.clientHeight || window.innerHeight;
+
+    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.z = 10;
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    clock = new THREE.Clock();
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(5, 10, 7);
+    scene.add(directionalLight);
+
+    // Football
+    const footballGeom = new THREE.SphereGeometry(0.5, 32, 32);
+    const footballMat = new THREE.MeshPhongMaterial({ 
+        color: 0xffffff, 
+        specular: 0x111111, 
+        shininess: 30,
+        flatShading: true 
+    });
+    football = new THREE.Mesh(footballGeom, footballMat);
+    football.position.x = -12;
+    scene.add(football);
+
+    // Trophy Parts (Abstract Geometric)
+    const trophyGeom = new THREE.CylinderGeometry(0.5, 1.5, 4, 32);
+    const trophyMat = new THREE.MeshPhongMaterial({ 
+        color: 0xC7A44A, // Premium Gold
+        metalness: 0.8,
+        roughness: 0.2
+    });
+
+    trophyLeft = new THREE.Mesh(trophyGeom, trophyMat);
+    trophyRight = new THREE.Mesh(trophyGeom, trophyMat);
+    
+    trophyLeft.position.y = -10; // Hide initially
+    trophyRight.position.y = -10;
+    
+    scene.add(trophyLeft);
+    scene.add(trophyRight);
+
+    // Core Glow (Intelligence Layer)
+    const coreGeom = new THREE.SphereGeometry(0.8, 32, 32);
+    const coreMat = new THREE.MeshBasicMaterial({ color: 0x1455D9, transparent: true, opacity: 0 });
+    coreGlow = new THREE.Mesh(coreGeom, coreMat);
+    scene.add(coreGlow);
+
+    window.addEventListener('resize', onWindowResize);
+    animate();
+}
+
+function onWindowResize() {
+    const width = container.clientWidth || window.innerWidth;
+    const height = container.clientHeight || window.innerHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    const time = clock.getElapsedTime();
+
+    if (time < 2) {
+        // Football movement
+        football.position.x = -12 + (time * 12);
+        football.rotation.z -= 0.1;
+    } else if (time < 4) {
+        // Trophy emergence
+        football.visible = false;
+        const t = (time - 2) / 2;
+        trophyLeft.position.y = -4 + (t * 4);
+        trophyRight.position.y = -4 + (t * 4);
+    } else if (time < 6) {
+        // Trophy splitting
+        const t = (time - 4) / 2;
+        trophyLeft.position.x = -t * 2;
+        trophyRight.position.x = t * 2;
+        coreGlow.material.opacity = t;
+    } else if (!animationComplete) {
+        animationComplete = true;
+        // Signal parent to transition
+        const event = new CustomEvent('introComplete');
+        window.dispatchEvent(event);
+    }
+
+    renderer.render(scene, camera);
+}
+
+init();
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_3 -->
+<button class="absolute bottom-10 right-10 z-[110] px-6 py-2 glass-panel fresnel-edge rounded-full text-primary font-label-sm tracking-widest hover:bg-primary/5 transition-all uppercase" onclick="skipIntro()">
+            Skip Intro
+        </button>
+<div class="z-[110] text-center">
+<h1 class="font-display-hero text-display-hero text-primary opacity-0 translate-y-4 transition-all duration-1000" id="intro-title">
+                StadiumOS
+            </h1>
+</div>
+</div>
+<!-- Main Navigation (TopAppBar Prediction) -->
+<nav class="fixed top-0 right-0 left-0 h-16 z-50 flex justify-between items-center px-margin-desktop bg-surface/40 backdrop-blur-2xl border-b border-white/10">
+<div class="flex items-center gap-4">
+<span class="font-display-hero text-headline-md font-bold text-primary">StadiumOS AI</span>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-sm" href="#">Home</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-sm" href="#">Operations</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-sm" href="#">Crowd Dynamics</a>
+<div class="h-6 w-px bg-outline-variant/30 mx-2"></div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform">notifications</span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform">schedule</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
+<img class="w-full h-full object-cover" data-alt="A professional high-resolution profile portrait of a stadium operations director in a modern, light-filled command center. The lighting is soft and airy, reflecting a premium spatial OS environment with soft blue and white tones. The subject is calm and authoritative, looking slightly off-camera." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiokHjEqaeIpSwJKrzfjADwygjBG0UBQKF78U9QZT-uZkVX7_9grhFP-CZa82RmAasJ5gICnTr2tLsycsbN3UrYU3E3381SZGWa8eMK7Vh4mzIWyveSns3pMr3zPGuFG1_13wIXjim2u6h5USvlNBKVh_zNPLrLXSxqvaLIz3IMPPeW7zNsFv9soLB41NSM24jSCs4U_hZ87BmZ1JPES2T_wtwSJCCWCmHKpbRVUjQlEwpAxNZGifSQFcn1DXCpw5eptzDvRZ5_5kw"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Side Navigation (SideNavBar Prediction - Hidden on Landing, visible for scale) -->
+<aside class="fixed left-0 top-0 h-screen w-20 z-40 bg-surface-container-lowest/60 backdrop-blur-xl border-r border-white/20 flex flex-col items-center py-8 gap-panel-gap hidden md:flex">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-primary text-3xl">view_in_ar</span>
+</div>
+<div class="flex flex-col gap-6">
+<div class="group relative flex flex-col items-center gap-1 cursor-pointer">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">view_in_ar</span>
+<span class="text-[10px] font-label-sm text-primary">Twin</span>
+<div class="absolute -left-0 top-0 h-full w-1 bg-primary rounded-r-full"></div>
+</div>
+<div class="group flex flex-col items-center gap-1 cursor-pointer opacity-50 hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">settings_suggest</span>
+<span class="text-[10px] font-label-sm">Ops</span>
+</div>
+<div class="group flex flex-col items-center gap-1 cursor-pointer opacity-50 hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">groups</span>
+<span class="text-[10px] font-label-sm">Crowd</span>
+</div>
+<div class="group flex flex-col items-center gap-1 cursor-pointer opacity-50 hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">directions_bus</span>
+<span class="text-[10px] font-label-sm">Transport</span>
+</div>
+<div class="group flex flex-col items-center gap-1 cursor-pointer opacity-50 hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">admin_panel_settings</span>
+<span class="text-[10px] font-label-sm">Admin</span>
+</div>
+</div>
+</aside>
+<!-- Hero Section -->
+<main class="relative min-h-screen pt-16 ml-0 md:ml-20">
+<!-- Full-bleed background shader -->
+<div class="absolute inset-0 z-0">
+<!-- STITCH_SHADER_START:ANIMATION_4 class="w-full h-full" -->
+<div class="w-full h-full" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_4" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_4');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `/**
+ * Architectural Stadium Background Shader
+ * Technique: Tier 3 WebGL Shader
+ * Visuals: A soft, architectural representation of a stadium bowl with subtle data paths
+ * and intelligence indicators flowing through it. High-contrast light mode.
+ */
+precision highp float;
+uniform float u_time;
+uniform vec2 u_resolution;
+varying vec2 v_texCoord;
+
+void main() {
+    vec2 uv = v_texCoord;
+    vec2 centeredUv = (uv - 0.5) * 2.0;
+    centeredUv.x *= u_resolution.x / u_resolution.y;
+
+    // Base background color (Stadium White)
+    vec3 color = vec3(0.97, 0.98, 0.99);
+
+    // Architectural Ellipse (Stadium Bowl)
+    float d = length(centeredUv * vec2(0.6, 1.0));
+    float bowl = smoothstep(0.8, 0.79, d);
+    color = mix(color, vec3(1.0), bowl * 0.5);
+
+    // Data flow paths (Subtle lines)
+    float paths = 0.0;
+    for(float i = 0.0; i < 5.0; i++) {
+        float speed = 0.2 + i * 0.1;
+        float y = fract(uv.y + u_time * speed + i * 0.2);
+        float line = smoothstep(0.01, 0.0, abs(uv.x - (0.2 + i * 0.15 + sin(uv.y * 5.0 + u_time) * 0.05)));
+        paths += line * smoothstep(0.0, 0.1, y) * smoothstep(1.0, 0.9, y);
+    }
+    color = mix(color, vec4(0.078, 0.333, 0.85, 1.0).rgb, paths * 0.15); // Tournament Blue paths
+
+    // Intelligence Glows
+    float glow = 0.0;
+    vec2 p1 = vec2(sin(u_time * 0.5) * 0.5, cos(u_time * 0.3) * 0.3);
+    glow += 0.05 / length(centeredUv - p1);
+    color += vec3(0.08, 0.33, 0.85) * glow * 0.1;
+
+    gl_FragColor = vec4(color, 1.0);
+}
+`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_4 -->
+</div>
+<div class="relative z-10 container mx-auto px-margin-desktop min-h-[calc(100vh-64px)] flex flex-col justify-center items-start">
+<div class="max-w-3xl space-y-8">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 glass-panel rounded-full ai-pulse border">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-sm text-primary tracking-wider uppercase">AI Cognitive Layer Active</span>
+</div>
+<h2 class="font-display-hero text-display-hero text-on-surface leading-none text-glow">
+                    THE INTELLIGENCE <br/>
+<span class="text-primary">LAYER</span> OF THE <br/>
+                    STADIUM
+                </h2>
+<p class="font-body-lg text-on-surface-variant max-w-xl">
+                    StadiumOS AI connects every fan, movement, operation, and decision in real time through a live high-fidelity digital twin environment.
+                </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="px-8 py-4 bg-primary text-white rounded-xl font-headline-md shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all relative overflow-hidden group">
+<span class="relative z-10">ENTER STADIUMOS</span>
+<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+</button>
+<button class="px-8 py-4 glass-panel fresnel-edge text-primary rounded-xl font-headline-md hover:bg-white/40 transition-all">
+                        EXPLORE THE DIGITAL TWIN
+                    </button>
+</div>
+</div>
+<!-- Scroll Indicator -->
+<div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-50">
+<span class="font-label-sm uppercase tracking-widest text-primary">Live Insights Below</span>
+<div class="w-px h-12 bg-gradient-to-b from-primary to-transparent"></div>
+</div>
+</div>
+</main>
+<!-- Section 1: Live Stadium Intelligence -->
+<section class="relative z-10 py-32 bg-white/40 backdrop-blur-md ml-0 md:ml-20">
+<div class="container mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-panel-gap">
+<!-- Stat Card 1 -->
+<div class="glass-panel p-8 rounded-2xl fresnel-edge hover:translate-y-[-4px] transition-all">
+<span class="font-label-sm text-on-surface-variant uppercase mb-2 block">Fans Connected</span>
+<div class="flex items-end gap-2">
+<span class="font-display-hero text-headline-lg text-primary counter" data-target="72840">0</span>
+<span class="font-label-sm text-tertiary mb-2 flex items-center">
+<span class="material-symbols-outlined text-sm">trending_up</span> 94%
+                        </span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[94%]"></div>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="glass-panel p-8 rounded-2xl fresnel-edge hover:translate-y-[-4px] transition-all">
+<span class="font-label-sm text-on-surface-variant uppercase mb-2 block">Route Confidence</span>
+<div class="flex items-end gap-2">
+<span class="font-display-hero text-headline-lg text-primary counter" data-target="98">0</span>
+<span class="font-display-hero text-headline-md text-primary mb-1">%</span>
+</div>
+<div class="mt-4 flex gap-1">
+<div class="h-2 w-full bg-primary rounded-full"></div>
+<div class="h-2 w-full bg-primary rounded-full"></div>
+<div class="h-2 w-full bg-primary rounded-full"></div>
+<div class="h-2 w-4 bg-primary/20 rounded-full"></div>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="glass-panel p-8 rounded-2xl fresnel-edge hover:translate-y-[-4px] transition-all">
+<span class="font-label-sm text-on-surface-variant uppercase mb-2 block">Congestion Prediction</span>
+<div class="flex items-end gap-2">
+<span class="font-display-hero text-headline-lg text-primary counter" data-target="12">0</span>
+<span class="font-headline-md text-primary mb-1">min</span>
+</div>
+<p class="mt-4 font-label-sm text-on-surface-variant">Estimated wait at Gate 4</p>
+</div>
+<!-- Stat Card 4 -->
+<div class="glass-panel p-8 rounded-2xl fresnel-edge hover:translate-y-[-4px] transition-all">
+<span class="font-label-sm text-on-surface-variant uppercase mb-2 block">Active Crowd Zones</span>
+<div class="flex items-end gap-2">
+<span class="font-display-hero text-headline-lg text-primary counter" data-target="4">0</span>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span>
+<span class="font-label-sm text-tertiary">All sectors optimal</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Experience Cards -->
+<section class="relative z-10 py-32 ml-0 md:ml-20">
+<div class="container mx-auto px-margin-desktop">
+<div class="mb-16">
+<h3 class="font-display-hero text-headline-lg text-on-surface mb-4">TAILORED ECOSYSTEMS</h3>
+<p class="text-on-surface-variant max-w-2xl">One platform, specialized views. StadiumOS AI provides role-specific intelligence layers for everyone in the venue.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Fans Card -->
+<div class="group relative aspect-[3/4] rounded-3xl overflow-hidden glass-panel-heavy fresnel-edge">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700" data-alt="A cinematic photo of excited fans at a modern high-tech stadium, illuminated by a warm evening glow and vibrant blue stadium lights. The fans are using their smartphones, which display augmented reality wayfinding overlays. The overall aesthetic is premium, clean, and futuristic with a focus on seamless connectivity." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBl_TC641-tU5WOhpKIZvydMwg73SlSTas-J3CAM6wyyUfpNL7-T8rxnfEdDiXPNYwcA0G4U0_DblpsqRsxNaIvJ5V8Q3rf6LxzMX6ETfVNNhRUGXd-7KLjb-2CUTnIEU10k4KLCHjQP6MEoIOVSHRc_Ict1IHP59SkPkjWOYT5Wru4kGkf88ISF0I9lFGswUMoIjlIQuUvBpkYUch4djbRcKE_qja7ipIACK8I6zXbiMZg5pWvVB6m_TJc2LK3Kxjf8aoktOaCd7Zb')"></div>
+<div class="absolute bottom-0 left-0 p-8 z-20 w-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+<span class="font-label-sm text-white/70 uppercase tracking-widest mb-2 block">Experience</span>
+<h4 class="font-display-hero text-headline-md text-white">FANS</h4>
+<p class="text-white/80 text-sm mt-4 opacity-0 group-hover:opacity-100 transition-opacity delay-100">Hyper-personalized navigation and real-time event updates delivered via spatial AR.</p>
+</div>
+</div>
+<!-- Operations Card -->
+<div class="group relative aspect-[3/4] rounded-3xl overflow-hidden glass-panel-heavy fresnel-edge">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700" data-alt="A wide-angle shot of a high-tech stadium operations control room. Rows of sleek transparent glass screens show 3D stadium heatmaps, data visualizations, and live camera feeds. The lighting is sophisticated, with deep navy and tournament blue highlights. Operators are focused on their ergonomic workstations, orchestrating logistics in real time." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCugGmm1bz6-c4q5oX2Q-JLclcvfC-tTGQrWa8W0qn2LxdVfYBOT0I97VgDHZ4AhIQRde1Vpw5-VF61qympcKirhfXQKdgUGw7McwVnYjrwh0c93e2ZFvmvIDvehX-pZcIv1OajjZdEeBartd22gMyYp2aqY52BNk7CWTWTmMSYtcfICzJbpUJxytp4w5lohGv0MI7zE-tIKtzBbkKrYgYIJVGGaYr4f_Q0Xxqb8z057WS1Huc2XbfGnoGRgWSnqD2nXId6RZskVNTy')"></div>
+<div class="absolute bottom-0 left-0 p-8 z-20 w-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+<span class="font-label-sm text-white/70 uppercase tracking-widest mb-2 block">Control</span>
+<h4 class="font-display-hero text-headline-md text-white">OPERATIONS</h4>
+<p class="text-white/80 text-sm mt-4 opacity-0 group-hover:opacity-100 transition-opacity delay-100">Live logistical monitoring, asset tracking, and predictive maintenance infrastructure.</p>
+</div>
+</div>
+<!-- Volunteers Card -->
+<div class="group relative aspect-[3/4] rounded-3xl overflow-hidden glass-panel-heavy fresnel-edge">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700" data-alt="A professional photo of stadium volunteers in clean branded uniforms, equipped with sleek mobile tablets showing crowd management data. They are assisting visitors in a bright, modern stadium concourse. The architecture is airy and minimal with glass and white steel. The mood is helpful and efficient." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBvy_vna_Jw-V6WivM0Q-xci3yi3K_3oXMgSZFoei4l7zUIVErrMezAXesBnxh3s_kqiAxlNpWExoSJAnn8d1ZkErhwygF4NCUaBte-wFkadTHJ8aOZ2hndZGsNcGcuVPH7Gb5Q1GeiLZDS7phuF3k8It17aSpSjBGUmFLhgtZQYoEWNa7kFXFbiYBo6XIgQ5cj6VXHwNxe43eOd8v_D5n7lQrVlvRn6svwGwudpE4oOo-A5L1wWlJbD0HTKd2yMW1g6kjxdT04O5Hq')"></div>
+<div class="absolute bottom-0 left-0 p-8 z-20 w-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+<span class="font-label-sm text-white/70 uppercase tracking-widest mb-2 block">Support</span>
+<h4 class="font-display-hero text-headline-md text-white">VOLUNTEERS</h4>
+<p class="text-white/80 text-sm mt-4 opacity-0 group-hover:opacity-100 transition-opacity delay-100">Real-time task assignment and dynamic crowd guiding based on AI heatmaps.</p>
+</div>
+</div>
+<!-- Organizers Card -->
+<div class="group relative aspect-[3/4] rounded-3xl overflow-hidden glass-panel-heavy fresnel-edge">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700" data-alt="A professional boardroom setting overlooking a brightly lit sports stadium. Executives are reviewing holographic 3D data projections of revenue and fan sentiment metrics. The environment is ultra-premium, with luxury materials and a clear view of the field. The atmosphere is calm, strategic, and high-stakes." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDYlBRiolKK9BOuGzYuEURILUf1_kT9xlnxjOPSQSaJCPD36N72PreIM5_upA4e_Klg62-lWPLtklH-DrcmiaDUEYJzo8IYoLKMhaSzsDzIbQEzDR8VeGTYx1e9ULBqgA3lB0b-Jx4ZD2C6QtI4YpZAdkSfGqtgXcSuYy79JdFAFtyeK5iFQrU5cvMxs36sFEtn_ORS3pkyNYbanayUA47ZSUlAHQbt6x0v2lbSl62QtRfgq9yBnFC4sYGBskuWbefy1MUMyZI435dO')"></div>
+<div class="absolute bottom-0 left-0 p-8 z-20 w-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+<span class="font-label-sm text-white/70 uppercase tracking-widest mb-2 block">Strategy</span>
+<h4 class="font-display-hero text-headline-md text-white">ORGANIZERS</h4>
+<p class="text-white/80 text-sm mt-4 opacity-0 group-hover:opacity-100 transition-opacity delay-100">High-level executive dashboards for revenue optimization and fan sentiment analysis.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Digital Twin Preview -->
+<section class="relative z-10 py-32 bg-surface-container-low/50 ml-0 md:ml-20">
+<div class="container mx-auto px-margin-desktop">
+<div class="flex flex-col lg:flex-row gap-16 items-center">
+<div class="lg:w-1/2 space-y-8">
+<h3 class="font-display-hero text-headline-lg text-on-surface">THE TWIN ARCHITECTURE</h3>
+<p class="text-body-lg text-on-surface-variant">Our high-fidelity digital twin isn't just a map—it's a living, breathing replica of your venue. Every IoT sensor, camera feed, and fan signal is synchronized with sub-millisecond latency.</p>
+<ul class="space-y-4">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<span class="font-headline-md block">Spatial Accuracy</span>
+<p class="text-sm text-on-surface-variant">3cm precision across all levels of the stadium.</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<span class="font-headline-md block">Predictive Simulating</span>
+<p class="text-sm text-on-surface-variant">Run "What-If" scenarios for emergencies and logistics.</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<span class="font-headline-md block">Holographic HUD</span>
+<p class="text-sm text-on-surface-variant">Gestural control for immersive venue exploration.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="lg:w-1/2 relative">
+<div class="glass-panel-heavy p-4 rounded-[40px] fresnel-edge shadow-2xl">
+<img class="w-full rounded-[32px] shadow-inner" data-alt="A highly detailed, sophisticated architectural 3D render of a futuristic stadium digital twin. The model is semi-transparent frosted glass with glowing gold and neon blue circuit-like data paths running through the structure. It floats in a minimalist light-mode space. Small glowing dots represent fan clusters moving through the concourses." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpcdlW-62BNW_p65xCZbLxI4XKM9LxS9voh2pR2KEwwG623ogq-NJ4zKvBhf1g16UQoEeanLRxZrjHcYeY5GVPSpC7PEPoQOhDGASfZ2Q4R7htJ7c8lWUQ3CtA9dEFQuf2w8GYe8e0qJAN9bW7KzUwSKdfytYzRDJijk9qdGjkxkCvYzdXolIDrTupOUFNAvcME_k94PwSDdiA4KgweIK-VvgYRFSiXpf3o9VCHsToIp81HDexGFFdHCsxG1rddGMxgTrxeJrF7V60"/>
+<!-- Floating HUD Overlay UI -->
+<div class="absolute top-10 right-10 p-6 glass-panel-heavy rounded-2xl border border-primary/20 shadow-xl max-w-[200px]">
+<div class="flex items-center gap-2 mb-4">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-sm text-primary uppercase">Sector B-4</span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between font-label-sm">
+<span class="opacity-60">Flow Rate</span>
+<span>42p/m</span>
+</div>
+<div class="h-1 bg-surface-container rounded-full">
+<div class="h-full bg-primary w-2/3"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="relative z-10 bg-on-surface text-white py-20 ml-0 md:ml-20">
+<div class="container mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="col-span-1 md:col-span-2">
+<h4 class="font-display-hero text-headline-md mb-6">StadiumOS AI</h4>
+<p class="text-white/60 max-w-sm mb-8">Redefining the architecture of entertainment through the power of collective intelligence and spatial design.</p>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-on-surface transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-xl">language</span>
+</div>
+<div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-on-surface transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-xl">share</span>
+</div>
+</div>
+</div>
+<div>
+<h5 class="font-label-sm uppercase tracking-widest text-primary mb-6">Platform</h5>
+<ul class="space-y-4 text-white/70">
+<li><a class="hover:text-white transition-colors" href="#">Digital Twin</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Safety Systems</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Fan Mobility</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Integrations</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-sm uppercase tracking-widest text-primary mb-6">Contact</h5>
+<p class="text-white/70 mb-4">MetLife Stadium, New Jersey<br/>HQ Operations Center</p>
+<p class="text-white/70">ops@stadiumos.ai</p>
+</div>
+</div>
+<div class="container mx-auto px-margin-desktop mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between gap-4 text-white/40 text-sm">
+<p>© 2024 StadiumOS Intelligence Layer. All Rights Reserved.</p>
+<div class="flex gap-8">
+<a class="hover:text-white" href="#">Privacy Protocol</a>
+<a class="hover:text-white" href="#">Terms of Intelligence</a>
+</div>
+</div>
+</footer>
+<script>
+        // Intro handling
+        const introLayer = document.getElementById('intro-layer');
+        const introTitle = document.getElementById('intro-title');
+
+        window.onload = () => {
+            setTimeout(() => {
+                introTitle.classList.remove('opacity-0', 'translate-y-4');
+            }, 500);
+
+            // Auto-transition after intro animation duration (simulated)
+            setTimeout(() => {
+                skipIntro();
+            }, 6000);
+
+            // Counter animation
+            const counters = document.querySelectorAll('.counter');
+            const observerOptions = {
+                threshold: 0.5
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = parseInt(entry.target.getAttribute('data-target'));
+                        animateCounter(entry.target, target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            counters.forEach(counter => observer.observe(counter));
+        };
+
+        function skipIntro() {
+            introLayer.style.opacity = '0';
+            introLayer.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                introLayer.style.display = 'none';
+                document.body.style.overflowY = 'auto';
+            }, 1200);
+        }
+
+        function animateCounter(el, target) {
+            let current = 0;
+            const duration = 2000;
+            const stepTime = Math.abs(Math.floor(duration / target));
+            const timer = setInterval(() => {
+                current += Math.ceil(target / 100);
+                if (current >= target) {
+                    el.innerText = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    el.innerText = current.toLocaleString();
+                }
+            }, 20);
+        }
+
+        // Initially lock scroll
+        document.body.style.overflowY = 'hidden';
+    </script>
+</body></html>

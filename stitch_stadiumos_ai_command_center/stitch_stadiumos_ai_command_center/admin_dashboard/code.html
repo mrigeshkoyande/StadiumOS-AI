@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StadiumOS AI | Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#191c1e",
+                    "on-tertiary-fixed": "#002110",
+                    "surface-container-high": "#e6e8ea",
+                    "on-primary-fixed": "#00174c",
+                    "tertiary-fixed-dim": "#77da9f",
+                    "on-tertiary-fixed-variant": "#00522f",
+                    "surface": "#f7f9fb",
+                    "outline-variant": "#c3c6d7",
+                    "inverse-primary": "#b4c5ff",
+                    "surface-bright": "#f7f9fb",
+                    "inverse-surface": "#2d3133",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#51617e",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e0e3e5",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#737686",
+                    "surface-tint": "#1053d7",
+                    "on-secondary-fixed-variant": "#374762",
+                    "tertiary": "#005431",
+                    "background": "#f7f9fb",
+                    "on-surface-variant": "#434654",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "primary-container": "#1455d9",
+                    "primary": "#003fad",
+                    "surface-dim": "#d8dadc",
+                    "on-primary-fixed-variant": "#003da9",
+                    "primary-fixed": "#dbe1ff",
+                    "error": "#ba1a1a",
+                    "surface-container-low": "#f2f4f6",
+                    "surface-container": "#eceef0",
+                    "surface-container-highest": "#e0e3e5",
+                    "secondary-fixed": "#d5e3ff",
+                    "secondary-fixed-dim": "#b6c7e8",
+                    "on-primary": "#ffffff",
+                    "on-background": "#191c1e",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-tertiary-container": "#8cf0b3",
+                    "on-secondary-fixed": "#091c35",
+                    "on-primary-container": "#d1daff",
+                    "secondary-container": "#ccddff",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-container": "#006f42",
+                    "secondary": "#4e5f7b",
+                    "tertiary-fixed": "#93f7ba"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1440px",
+                    "unit": "8px",
+                    "panel-gap": "12px",
+                    "margin-desktop": "40px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "display-hero": ["Outfit"],
+                    "mono-data": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Outfit"],
+                    "headline-md": ["Outfit"],
+                    "headline-lg-mobile": ["Outfit"]
+            },
+            "fontSize": {
+                    "display-hero": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "mono-data": ["14px", {"lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-glow {
+            box-shadow: 0 0 15px rgba(0, 63, 173, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="fixed left-0 top-0 h-screen w-20 border-r border-white/20 bg-surface-container-lowest/60 backdrop-blur-xl shadow-[0_8px_32px_rgba(7,26,51,0.08)] flex flex-col items-center py-8 gap-panel-gap z-50">
+<div class="mb-8 scale-110">
+<span class="material-symbols-outlined text-primary text-3xl">token</span>
+</div>
+<nav class="flex flex-col gap-6 items-center w-full">
+<!-- Digital Twin -->
+<button class="flex flex-col items-center gap-1 group text-on-surface-variant/70 dark:text-surface-variant/70 hover:bg-primary/10 transition-colors p-2 rounded-xl scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="view_in_ar">view_in_ar</span>
+<span class="font-label-sm text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">Twin</span>
+</button>
+<!-- Operations -->
+<button class="flex flex-col items-center gap-1 group text-on-surface-variant/70 dark:text-surface-variant/70 hover:bg-primary/10 transition-colors p-2 rounded-xl scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
+<span class="font-label-sm text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">Ops</span>
+</button>
+<!-- Crowd -->
+<button class="flex flex-col items-center gap-1 group text-on-surface-variant/70 dark:text-surface-variant/70 hover:bg-primary/10 transition-colors p-2 rounded-xl scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-label-sm text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">Crowd</span>
+</button>
+<!-- Transport -->
+<button class="flex flex-col items-center gap-1 group text-on-surface-variant/70 dark:text-surface-variant/70 hover:bg-primary/10 transition-colors p-2 rounded-xl scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="directions_bus">directions_bus</span>
+<span class="font-label-sm text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">Transit</span>
+</button>
+<!-- Admin (Active) -->
+<button class="flex flex-col items-center gap-1 group text-primary dark:text-primary-fixed border-l-4 border-primary hover:bg-primary/10 transition-colors p-2 w-full scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="font-label-sm text-[10px]">Admin</span>
+</button>
+</nav>
+<div class="mt-auto flex flex-col items-center gap-4">
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a stadium operator in a high-tech control room environment. The lighting is cool-toned with blue and white accents from digital monitors in the background. The person is looking confidently at the camera, wearing professional administrative attire in a minimalist, modern setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhiZPDatFxe6Geetpv2vk0WwN8wiyESqRV79i0BNhQws1ptyfVmDISD5ORajzf2hYpv6z9bSY1Y_PH2BUGvQ2GaSjnbT5wvC4Ydg878A1aRCGIg1q3CrUyZlS1SdPaKUjq5AJi7-xw7FGqxLefOZ4mFwwPys5i02QFz-5dmmUCIZoZnQ7Y2i4WZsx6yVsQPdrhLFvXBlRoLvQhZ-fCFT9A94dpj1OsXuzi_rMGaAUQO4RKLTWxDcY794uWxbmV_RVxP0VoJq6QVttx"/>
+</div>
+</div>
+</aside>
+<!-- TopAppBar (Authority: JSON) -->
+<header class="fixed top-0 right-0 left-20 h-16 border-b border-white/10 bg-surface/40 backdrop-blur-2xl flex justify-between items-center px-margin-desktop w-full ml-0 shadow-sm z-40">
+<div class="flex items-center gap-4">
+<h1 class="font-display-hero text-headline-md font-bold text-on-surface">StadiumOS AI</h1>
+<span class="px-2 py-0.5 rounded bg-primary-container text-on-primary-container font-label-sm">ADMIN</span>
+</div>
+<div class="flex items-center gap-gutter">
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-1.5 w-64 focus:ring-2 focus:ring-primary/50 transition-all font-body-md" placeholder="Search system logs..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all">schedule</button>
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded-full font-label-sm flex items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                    AI Copilot
+                </button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-20 mt-16 p-margin-desktop h-[calc(100vh-64px)] overflow-y-auto">
+<!-- Health Metrics Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-panel-gap mb-gutter">
+<div class="glass-panel p-gutter rounded-xl flex items-center justify-between shadow-sm">
+<div>
+<p class="font-label-sm text-outline uppercase">AI Response Latency</p>
+<h3 class="font-headline-lg text-primary">45ms</h3>
+</div>
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">bolt</span>
+</div>
+</div>
+<div class="glass-panel p-gutter rounded-xl flex items-center justify-between shadow-sm">
+<div>
+<p class="font-label-sm text-outline uppercase">System Status</p>
+<h3 class="font-headline-lg text-tertiary">STABLE</h3>
+</div>
+<div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">check_circle</span>
+</div>
+</div>
+<div class="glass-panel p-gutter rounded-xl flex items-center justify-between shadow-sm">
+<div>
+<p class="font-label-sm text-outline uppercase">Active API Connections</p>
+<h3 class="font-headline-lg text-on-surface">1,420</h3>
+</div>
+<div class="w-12 h-12 rounded-full bg-on-surface/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface">hub</span>
+</div>
+</div>
+</div>
+<!-- Management Sections -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- User & Role Management -->
+<section class="col-span-12 lg:col-span-8">
+<div class="glass-panel rounded-xl overflow-hidden shadow-sm">
+<div class="px-gutter py-4 border-b border-white/10 flex justify-between items-center bg-white/40">
+<h2 class="font-headline-md text-on-surface">User &amp; Role Management</h2>
+<button class="text-primary font-label-sm flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">person_add</span>
+                            Add User
+                        </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low/50">
+<tr class="font-label-sm text-outline">
+<th class="px-gutter py-3">NAME</th>
+<th class="px-gutter py-3">ROLE</th>
+<th class="px-gutter py-3">LAST ACTIVE</th>
+<th class="px-gutter py-3">STATUS</th>
+<th class="px-gutter py-3 text-right">ACTIONS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/10">
+<tr class="hover:bg-primary/5 transition-colors cursor-pointer group">
+<td class="px-gutter py-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container"></div>
+<div>
+<p class="font-body-md font-semibold">Alex Rivera</p>
+<p class="text-[10px] text-outline">a.rivera@metlife.com</p>
+</div>
+</td>
+<td class="px-gutter py-4">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm">Director</span>
+</td>
+<td class="px-gutter py-4 font-mono-data text-xs text-on-surface-variant">2 mins ago</td>
+<td class="px-gutter py-4">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-xs">Active</span>
+</div>
+</td>
+<td class="px-gutter py-4 text-right">
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors cursor-pointer group">
+<td class="px-gutter py-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high"></div>
+<div>
+<p class="font-body-md font-semibold">Sarah Chen</p>
+<p class="text-[10px] text-outline">s.chen@metlife.com</p>
+</div>
+</td>
+<td class="px-gutter py-4">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm">Operator</span>
+</td>
+<td class="px-gutter py-4 font-mono-data text-xs text-on-surface-variant">14h ago</td>
+<td class="px-gutter py-4">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-outline"></div>
+<span class="text-xs">Offline</span>
+</div>
+</td>
+<td class="px-gutter py-4 text-right">
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors cursor-pointer group">
+<td class="px-gutter py-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed"></div>
+<div>
+<p class="font-body-md font-semibold">Jordan Blake</p>
+<p class="text-[10px] text-outline">j.blake@stadium.os</p>
+</div>
+</td>
+<td class="px-gutter py-4">
+<span class="px-2 py-0.5 rounded-full bg-tertiary-container/20 text-tertiary font-label-sm">Security Admin</span>
+</td>
+<td class="px-gutter py-4 font-mono-data text-xs text-on-surface-variant">Just now</td>
+<td class="px-gutter py-4">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-xs">Active</span>
+</div>
+</td>
+<td class="px-gutter py-4 text-right">
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">more_vert</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Stadium Config / Gate Settings -->
+<div class="mt-gutter grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="glass-panel p-gutter rounded-xl">
+<h3 class="font-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">gate</span>
+                            Gate Configuration
+                        </h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-white/40 rounded-lg">
+<span class="font-body-md">Main North Entrance</span>
+<div class="flex items-center gap-4">
+<span class="text-xs font-mono-data text-tertiary">8/12 ACTIVE</span>
+<div class="w-10 h-5 bg-tertiary/20 rounded-full relative cursor-pointer">
+<div class="absolute right-0.5 top-0.5 w-4 h-4 bg-tertiary rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 bg-white/40 rounded-lg">
+<span class="font-body-md">VIP West Wing</span>
+<div class="flex items-center gap-4">
+<span class="text-xs font-mono-data text-tertiary">4/4 ACTIVE</span>
+<div class="w-10 h-5 bg-tertiary/20 rounded-full relative cursor-pointer">
+<div class="absolute right-0.5 top-0.5 w-4 h-4 bg-tertiary rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 bg-white/40 rounded-lg">
+<span class="font-body-md">South Service Gate</span>
+<div class="flex items-center gap-4">
+<span class="text-xs font-mono-data text-error">STANDBY</span>
+<div class="w-10 h-5 bg-surface-variant rounded-full relative cursor-pointer">
+<div class="absolute left-0.5 top-0.5 w-4 h-4 bg-outline rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="glass-panel p-gutter rounded-xl">
+<h3 class="font-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">sensors</span>
+                            Sensor Array Status
+                        </h3>
+<div class="flex flex-wrap gap-3">
+<div class="flex-1 min-w-[120px] p-3 rounded-lg border border-primary/20 bg-primary/5 text-center">
+<p class="text-xs text-outline uppercase mb-1">Optical</p>
+<p class="font-headline-md text-primary">98.4%</p>
+</div>
+<div class="flex-1 min-w-[120px] p-3 rounded-lg border border-tertiary/20 bg-tertiary/5 text-center">
+<p class="text-xs text-outline uppercase mb-1">Thermal</p>
+<p class="font-headline-md text-tertiary">100%</p>
+</div>
+<div class="flex-1 min-w-[120px] p-3 rounded-lg border border-outline/20 bg-surface-container text-center">
+<p class="text-xs text-outline uppercase mb-1">IoT Hubs</p>
+<p class="font-headline-md text-on-surface">42/45</p>
+</div>
+</div>
+<div class="mt-4 p-3 rounded bg-surface-container-low border-l-4 border-primary">
+<p class="text-xs leading-relaxed">
+<span class="font-bold">AI Diagnostic:</span> High interference detected in Sector 4B. Recommend recalibrating thermal array before next event cycle.
+                            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Contextual Panels -->
+<aside class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<!-- System Configuration -->
+<section class="glass-panel p-gutter rounded-xl shadow-sm">
+<h2 class="font-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">settings</span>
+                        Core Configuration
+                    </h2>
+<div class="space-y-6">
+<div>
+<label class="font-label-sm text-outline block mb-2">OS OPERATING MODE</label>
+<select class="w-full bg-white border-outline-variant rounded-lg font-body-md focus:ring-primary focus:border-primary">
+<option>Tournament Mode (High Performance)</option>
+<option>Standby (Power Saving)</option>
+<option>Maintenance (Diagnostic)</option>
+</select>
+</div>
+<div>
+<label class="font-label-sm text-outline block mb-2">AI COGNITIVE LOAD LIMIT</label>
+<input class="w-full h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+<div class="flex justify-between mt-1">
+<span class="text-[10px] text-outline">Conservative</span>
+<span class="text-[10px] font-bold text-primary">Current: 85%</span>
+<span class="text-[10px] text-outline">Max Flow</span>
+</div>
+</div>
+<div class="pt-4 border-t border-white/20">
+<button class="w-full py-2 bg-on-surface text-white rounded-lg font-label-sm hover:bg-on-surface-variant transition-colors">
+                                PUSH UPDATE TO ALL TERMINALS
+                            </button>
+</div>
+</div>
+</section>
+<!-- Audit Logs -->
+<section class="glass-panel rounded-xl shadow-sm flex-1 flex flex-col min-h-[400px]">
+<div class="px-gutter py-4 border-b border-white/10 flex justify-between items-center">
+<h2 class="font-headline-md text-on-surface">Audit Logs</h2>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors">filter_list</span>
+</div>
+<div class="p-gutter overflow-y-auto max-h-[350px] space-y-4 font-mono-data">
+<div class="flex gap-3 text-xs">
+<span class="text-outline shrink-0">14:22:01</span>
+<p><span class="text-primary font-bold">USER_LOGIN:</span> a.rivera access granted from Terminal-A9.</p>
+</div>
+<div class="flex gap-3 text-xs">
+<span class="text-outline shrink-0">14:18:45</span>
+<p><span class="text-tertiary font-bold">SYS_RECOVERY:</span> Automated load balancing completed in 2.4s.</p>
+</div>
+<div class="flex gap-3 text-xs">
+<span class="text-outline shrink-0">13:55:12</span>
+<p><span class="text-error font-bold">AUTH_FAIL:</span> 3 failed attempts on node STADIUM-WIFI-6.</p>
+</div>
+<div class="flex gap-3 text-xs">
+<span class="text-outline shrink-0">13:40:22</span>
+<p><span class="text-on-surface font-bold">CONFIG_CHANGE:</span> Gate 12 state toggled to CLOSED by SYSTEM_AI.</p>
+</div>
+<div class="flex gap-3 text-xs">
+<span class="text-outline shrink-0">13:12:00</span>
+<p><span class="text-primary font-bold">UPDATE_APPLIED:</span> Security Patch v4.2.1 installed.</p>
+</div>
+<div class="flex gap-3 text-xs">
+<span class="text-outline shrink-0">12:45:10</span>
+<p><span class="text-outline font-bold">PING_REPLY:</span> All 1,420 sensors active.</p>
+</div>
+<div class="flex gap-3 text-xs">
+<span class="text-outline shrink-0">12:30:00</span>
+<p><span class="text-on-surface font-bold">CRON_JOB:</span> Daily backup stored to STADIUM-VAULT-2.</p>
+</div>
+</div>
+<button class="m-gutter mt-auto p-2 text-center text-outline text-xs border border-dashed border-outline-variant rounded hover:bg-white/40 transition-colors">
+                        EXPORT FULL LOG (CSV)
+                    </button>
+</section>
+</aside>
+</div>
+</main>
+<!-- Background Decoration -->
+<div class="fixed inset-0 pointer-events-none -z-10 opacity-30 overflow-hidden">
+
+</div>
+<script>
+        // Simple Micro-interactions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.add('scale-90');
+                setTimeout(() => this.classList.remove('scale-90'), 150);
+            });
+        });
+
+        // Dynamic health metric update simulation
+        setInterval(() => {
+            const latency = Math.floor(Math.random() * 15) + 38;
+            const latencyElement = document.querySelector('h3.text-primary');
+            if(latencyElement) latencyElement.innerText = latency + 'ms';
+        }, 5000);
+    </script>
+</body></html>

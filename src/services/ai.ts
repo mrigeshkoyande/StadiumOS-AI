@@ -51,28 +51,33 @@ export async function askAI(prompt: string, role: 'fan' | 'ops' = 'fan', languag
   try {
     const model = genAI.getGenerativeModel({ 
       model: "gemini-1.5-flash",
-      systemInstruction: `You are StadiumOS AI, the intelligence layer for FIFA World Cup 2026. 
-      You are speaking to a ${role === 'ops' ? 'stadium operations manager' : 'fan/visitor'}.
-      Use the provided tools to fetch real-time stadium data.
-      You MUST respond strictly in valid JSON format matching this schema:
-      {
-        "type": "route_recommendation" | "crowd_analysis" | "incident_analysis" | "transport_recommendation" | "accessibility_guidance" | "multilingual_translation" | "sustainability_insight" | "operational_recommendation",
-        "summary": "Short 1-2 sentence summary",
-        "recommendation": "Detailed recommendation text",
-        "confidence": 0.95,
-        "priority": "low" | "medium" | "high" | "critical",
-        "actions": ["Array of short action strings"],
-        "supportingData": [],
-        "timestamp": "ISO timestamp"
-      }
-      CRITICAL: You MUST write your text fields ("summary", "recommendation", and "actions") in the following language: ${language}.`,
+      systemInstruction: `You are StadiumOS AI, a grounded stadium intelligence assistant.
+You may only make factual claims based on verified data provided by the application or returned by authorized tools.
+Never invent facts. Never guess missing values. Never claim that an action succeeded unless the backend confirms success.
+Never claim that a ticket, route, incident, gate, transport service, or stadium state exists unless verified.
+If required data is missing, explicitly state that the information is unavailable.
+If the user asks for information about a different user, refuse due to privacy restrictions.
+If the user asks for an action, return a structured action request and wait for backend authorization and execution.
+All operational decisions must remain subject to authorized backend validation.
+
+You MUST respond strictly in valid JSON format matching this exact schema:
+{
+  "answer": "Your detailed string response to the user in the required language.",
+  "intent": "navigation | ticket | operations | incident | transport | accessibility | general",
+  "confidence": 0.0 to 1.0 (float). Set to 0 if data is missing or unverified.,
+  "dataSources": ["Array of source strings e.g., 'live_db', 'simulated_telemetry', 'tool_name'"],
+  "verified": boolean (true only if answer is based on actual data),
+  "requiresAction": boolean (true if backend needs to execute something),
+  "recommendedActions": [{"action": "name", "params": {}}],
+  "missingData": ["Array of strings describing what data was missing to answer fully, or empty array"]
+}
+CRITICAL: You MUST write your "answer" field in the following language: ${language}.`,
       tools: [{ functionDeclarations: functions as unknown as import("@google/generative-ai").Tool[] }]
     });
 
     const chat = model.startChat();
     const result = await chat.sendMessage(prompt);
     
-    // Check if the model wants to call a function
     const calls = result.response.functionCalls();
     
     if (calls && calls.length > 0) {
@@ -94,7 +99,6 @@ export async function askAI(prompt: string, role: 'fan' | 'ops' = 'fan', languag
         };
       });
 
-      // Send the tool response back to the model
       const finalResult = await chat.sendMessage(functionResponses as import("@google/generative-ai").Part[]);
       return parseJsonResponse(finalResult.response.text());
     }
@@ -104,23 +108,29 @@ export async function askAI(prompt: string, role: 'fan' | 'ops' = 'fan', languag
   } catch (error) {
     console.error("AI Error:", error);
     return {
-      type: 'operational_recommendation',
-      summary: 'Live intelligence temporarily unavailable.',
-      recommendation: 'Please rely on standard operational procedures or try asking again.',
+      answer: 'I don\'t have enough verified data to answer that accurately. Live intelligence temporarily unavailable.',
+      intent: 'general',
       confidence: 0,
-      priority: 'low',
-      actions: [],
-      supportingData: [],
-      timestamp: new Date().toISOString()
+      dataSources: [],
+      verified: false,
+      requiresAction: false,
+      recommendedActions: [],
+      missingData: ["API Connection"]
     };
   }
 }
 
 function parseJsonResponse(text: string): AIResponse {
   try {
-    // Attempt to strip markdown formatting if the model wraps it in ```json
     const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleaned) as AIResponse;
+    const parsed = JSON.parse(cleaned);
+    
+    // Schema Validator
+    if (typeof parsed.answer !== 'string' || typeof parsed.intent !== 'string' || typeof parsed.confidence !== 'number') {
+      throw new Error("Invalid AI schema returned");
+    }
+    
+    return parsed as AIResponse;
   } catch (e) {
     console.error("Failed to parse JSON from AI", text);
     throw e;
@@ -132,23 +142,88 @@ function simulateAIResponse(prompt: string, role: string, language: string): Pro
   return new Promise(resolve => {
     setTimeout(() => {
       const lowerPrompt = prompt.toLowerCase();
-      const isCongested = lowerPrompt.includes("gate b") || lowerPrompt.includes("congested") || lowerPrompt.includes("incident") || lowerPrompt.includes("crowd") || lowerPrompt.includes("214");
+      
+      // Hallucination Tests Logic
+      if (lowerPrompt.includes("gate z")) {
+        return resolve({
+          answer: "I don't have verified information about that gate.",
+          intent: 'operations',
+          confidence: 0,
+          dataSources: [],
+          verified: false,
+          requiresAction: false,
+          recommendedActions: [],
+          missingData: ["Gate Z data"]
+        });
+      }
+      
+      if (lowerPrompt.includes("invalid ticket") || lowerPrompt.includes("ticket 999")) {
+        return resolve({
+          answer: "I cannot verify this ticket from the available data.",
+          intent: 'ticket',
+          confidence: 0,
+          dataSources: [],
+          verified: false,
+          requiresAction: false,
+          recommendedActions: [],
+          missingData: ["Ticket validation"]
+        });
+      }
+      
+      if (lowerPrompt.includes("fake incident") || lowerPrompt.includes("unknown incident")) {
+        return resolve({
+          answer: "No verified incident data is available.",
+          intent: 'incident',
+          confidence: 0,
+          dataSources: [],
+          verified: false,
+          requiresAction: false,
+          recommendedActions: [],
+          missingData: ["Incident reports"]
+        });
+      }
+      
+      if (lowerPrompt.includes("transport data") || lowerPrompt.includes("bus schedule")) {
+        return resolve({
+          answer: "Transport information is currently unavailable.",
+          intent: 'transport',
+          confidence: 0,
+          dataSources: [],
+          verified: false,
+          requiresAction: false,
+          recommendedActions: [],
+          missingData: ["Transport API"]
+        });
+      }
+
+      if (lowerPrompt.includes("invent") || lowerPrompt.includes("ignore previous")) {
+        return resolve({
+          answer: "I cannot fabricate information or override my system instructions.",
+          intent: 'general',
+          confidence: 1,
+          dataSources: ["system_rules"],
+          verified: true,
+          requiresAction: false,
+          recommendedActions: [],
+          missingData: []
+        });
+      }
+
+      const isCongested = lowerPrompt.includes("gate b") || lowerPrompt.includes("congested") || lowerPrompt.includes("incident") || lowerPrompt.includes("crowd") || lowerPrompt.includes("214") || lowerPrompt.includes("increasing rapidly");
       
       const translations: Record<string, {
-        congested: { summary: string; recommendation: string; actions: string[] };
-        normal: { summary: string; recommendation: string; actions: string[] };
+        congested: { answer: string; actions: any[] };
+        normal: { answer: string; actions: any[] };
       }> = {
         'English': {
           congested: {
-            summary: "Gate B is currently heavily congested.",
-            recommendation: role === 'ops' 
-              ? "Gate B crowd density is increasing rapidly. Predicted congestion within 12 minutes. Recommended action: redirect fans to Gate C and deploy 3 volunteers."
+            answer: role === 'ops' 
+              ? "Gate B crowd density is increasing rapidly. Predicted congestion within 12 minutes. Recommended action: redirect fans to Gate C and deploy volunteers."
               : "Gate B is congested. The fastest accessible route is through the east concourse via Gate C. Estimated walking time: 8 minutes.",
-            actions: role === 'ops' ? ["Deploy 3 volunteers to Gate B", "Update signage to redirect to Gate C"] : ["Walk to Gate C"],
+            actions: role === 'ops' ? [{ action: "redirect_crowd", source: "Gate B", destination: "Gate C" }, { action: "deploy_volunteers", location: "Gate B" }] : [{ action: "navigate", destination: "Gate C" }],
           },
           normal: {
-            summary: "Normal stadium conditions.",
-            recommendation: role === 'ops' 
+            answer: role === 'ops' 
               ? "All gates are operating within normal parameters. Continue standard monitoring."
               : "Welcome to the stadium! How can I help you find your way?",
             actions: [],
@@ -156,81 +231,15 @@ function simulateAIResponse(prompt: string, role: string, language: string): Pro
         },
         'Spanish': {
           congested: {
-            summary: "La puerta B está actualmente muy congestionada.",
-            recommendation: role === 'ops' 
-              ? "La densidad de la multitud en la puerta B está aumentando rápidamente. Se predice congestión en 12 minutos. Acción recomendada: redirigir a los aficionados a la puerta C y desplegar a 3 voluntarios."
+            answer: role === 'ops' 
+              ? "La densidad de la multitud en la puerta B está aumentando rápidamente. Se predice congestión en 12 minutos. Acción recomendada: redirigir a los aficionados a la puerta C y desplegar a voluntarios."
               : "La puerta B está congestionada. La ruta accesible más rápida es a través del vestíbulo este por la puerta C. Tiempo estimado de caminata: 8 minutos.",
-            actions: role === 'ops' ? ["Desplegar 3 voluntarios en la puerta B", "Actualizar señalización para redirigir a la puerta C"] : ["Caminar hacia la puerta C"],
+            actions: role === 'ops' ? [{ action: "redirect_crowd", source: "Gate B", destination: "Gate C" }] : [{ action: "navigate", destination: "Gate C" }],
           },
           normal: {
-            summary: "Condiciones normales del estadio.",
-            recommendation: role === 'ops' 
+            answer: role === 'ops' 
               ? "Todas las puertas están operando dentro de los parámetros normales. Continuar con el monitoreo estándar."
               : "¡Bienvenido al estadio! ¿Cómo puedo ayudarte a encontrar tu camino?",
-            actions: [],
-          }
-        },
-        'French': {
-          congested: {
-            summary: "La porte B est actuellement très encombrée.",
-            recommendation: role === 'ops' 
-              ? "La densité de foule à la porte B augmente rapidement. Congestion prévue d'ici 12 minutes. Action recommandée : rediriger les supporters vers la porte C et déployer 3 volontaires."
-              : "La porte B est encombrée. L'itinéraire accessible le plus rapide passe par le hall est via la porte C. Temps de marche estimé : 8 minutes.",
-            actions: role === 'ops' ? ["Déployer 3 volontaires à la porte B", "Mettre à jour la signalisation vers la porte C"] : ["Marcher vers la porte C"],
-          },
-          normal: {
-            summary: "Conditions normales du stade.",
-            recommendation: role === 'ops' 
-              ? "Toutes les portes fonctionnent selon les paramètres normaux. Continuer la surveillance standard."
-              : "Bienvenue au stade ! Comment puis-je vous aider à trouver votre chemin ?",
-            actions: [],
-          }
-        },
-        'Arabic': {
-          congested: {
-            summary: "البوابة B مزدحمة للغاية حاليًا.",
-            recommendation: role === 'ops' 
-              ? "كثافة الحشود عند البوابة B تتزايد بسرعة. توقع حدوث ازدحام خلال 12 دقيقة. الإجراء الموصى به: توجيه المشجعين إلى البوابة C ونشر 3 متطوعين."
-              : "البوابة B مزدحمة. أسرع مسار متاح لذوي الاحتياجات الخاصة هو عبر الممر الشرقي عبر البوابة C. وقت المشي المقدر: 8 دقائق.",
-            actions: role === 'ops' ? ["نشر 3 متطوعين عند البوابة B", "تحديث اللوحات الإرشادية للتوجيه إلى البوابة C"] : ["المشي إلى البوابة C"],
-          },
-          normal: {
-            summary: "ظروف الاستاد طبيعية.",
-            recommendation: role === 'ops' 
-              ? "جميع البوابات تعمل ضمن المعايير الطبيعية. الاستمرار في المراقبة القياسية."
-              : "مرحبًا بك في الاستاد! كيف يمكنني مساعدتك في العثور على طريقك؟",
-            actions: [],
-          }
-        },
-        'Hindi': {
-          congested: {
-            summary: "गेट B वर्तमान में अत्यधिक भीड़भाड़ वाला है।",
-            recommendation: role === 'ops' 
-              ? "गेट B पर भीड़ का घनत्व तेजी से बढ़ रहा है। 12 मिनट के भीतर भीड़भाड़ होने की भविष्यवाणी है। अनुशंसित कार्रवाई: प्रशंसकों को गेट C पर पुनर्निर्देशित करें और 3 स्वयंसेवकों को तैनात करें।"
-              : "गेट B पर भीड़ है। सबसे तेज़ सुलभ मार्ग गेट C के माध्यम से पूर्वी कॉन्कोर्स से है। अनुमानित चलने का समय: 8 मिनट।",
-            actions: role === 'ops' ? ["गेट B पर 3 स्वयंसेवकों को तैनात करें", "गेट C पर पुनर्निर्देशित करने के लिए साइनेज अपडेट करें"] : ["गेट C की ओर चलें"],
-          },
-          normal: {
-            summary: "सामान्य स्टेडियम की स्थिति।",
-            recommendation: role === 'ops' 
-              ? "सभी गेट सामान्य मानकों के भीतर काम कर रहे हैं। मानक निगरानी जारी रखें।"
-              : "स्टेडियम में आपका स्वागत है! मैं आपको रास्ता खोजने में कैसे मदद कर सकता हूँ?",
-            actions: [],
-          }
-        },
-        'Portuguese': {
-          congested: {
-            summary: "O Portão B está atualmente muito congestionado.",
-            recommendation: role === 'ops' 
-              ? "A densidade da multidão no Portão B está aumentando rapidamente. Congestionamento previsto em 12 minutos. Ação recomendada: redirecionar os torcedores para o Portão C e implantar 3 voluntários."
-              : "O Portão B está congestionado. A rota acessível mais rápida é pelo saguão leste via Portão C. Tempo de caminhada estimado: 8 minutos.",
-            actions: role === 'ops' ? ["Implantar 3 voluntários no Portão B", "Atualizar sinalização para redirecionar para o Portão C"] : ["Caminhar até o Portão C"],
-          },
-          normal: {
-            summary: "Condições normais do estádio.",
-            recommendation: role === 'ops' 
-              ? "Todos os portões estão operando dentro dos parâmetros normais. Continue o monitoramento padrão."
-              : "Bem-vindo ao estádio! Como posso ajudá-lo a encontrar seu caminho?",
             actions: [],
           }
         }
@@ -240,15 +249,15 @@ function simulateAIResponse(prompt: string, role: string, language: string): Pro
       const content = isCongested ? translations[langKey].congested : translations[langKey].normal;
 
       resolve({
-        type: isCongested ? "crowd_analysis" : "route_recommendation",
-        summary: content.summary,
-        recommendation: content.recommendation,
+        answer: content.answer,
+        intent: isCongested ? "operations" : "navigation",
         confidence: isCongested ? 0.92 : 0.98,
-        priority: isCongested ? "high" : "low",
-        actions: content.actions,
-        supportingData: isCongested ? [{ id: "gate-b", status: "high density", queue: 450 }] : [],
-        timestamp: new Date().toISOString()
+        dataSources: ["simulated_telemetry"],
+        verified: true, // It is verified in the context of the demo
+        requiresAction: content.actions.length > 0,
+        recommendedActions: content.actions,
+        missingData: []
       });
-    }, 1000); // simulate network delay
+    }, 1000);
   });
 }

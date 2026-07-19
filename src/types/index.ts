@@ -30,14 +30,14 @@ export interface TransportStatus {
 }
 
 export interface AIResponse {
-  type: 'route_recommendation' | 'crowd_analysis' | 'incident_analysis' | 'transport_recommendation' | 'accessibility_guidance' | 'multilingual_translation' | 'sustainability_insight' | 'operational_recommendation';
-  summary: string;
-  recommendation: string;
+  answer: string;
+  intent: 'navigation' | 'ticket' | 'operations' | 'incident' | 'transport' | 'accessibility' | 'general';
   confidence: number;
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  actions: string[];
-  supportingData: Record<string, unknown>[];
-  timestamp: string;
+  dataSources: string[];
+  verified: boolean;
+  requiresAction: boolean;
+  recommendedActions: Record<string, unknown>[];
+  missingData: string[];
 }
 
 /** 3D position in the stadium scene [x, y, z] */

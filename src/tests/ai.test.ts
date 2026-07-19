@@ -8,9 +8,9 @@ describe('AI Service', () => {
     const response = await askAI('Is gate B congested?', 'ops');
     
     expect(response).toBeDefined();
-    expect(response.type).toBe('crowd_analysis');
-    expect(response.priority).toBe('high');
-    expect(response.recommendation).toContain('Gate B crowd density is increasing rapidly');
+    expect(response.intent).toBe('operations');
+    expect(response.verified).toBe(true);
+    expect(response.answer).toContain('Gate B crowd density is increasing rapidly');
   });
 
   it('mock data tool returns valid JSON', () => {

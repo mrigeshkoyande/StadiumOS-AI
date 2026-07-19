@@ -43,7 +43,7 @@ export function FanView() {
       const response = await askAI(userQuery, 'fan', currentLanguage);
       setChatHistory(prev => [
         ...prev, 
-        { role: 'ai', content: response.recommendation, aiData: response }
+        { role: 'ai', content: response.answer, aiData: response }
       ]);
     } catch {
       setChatHistory(prev => [
@@ -112,12 +112,39 @@ export function FanView() {
                   ? 'bg-[#003fad] text-white rounded-tr-none font-medium' 
                   : 'bg-white text-[#191c1e] border border-slate-200 rounded-tl-none'
               )}>
+                {msg.role === 'ai' && msg.aiData && (
+                  <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
+                    {msg.aiData.verified ? (
+                       <span className="flex items-center gap-1 text-[#005431] font-bold text-[10px] uppercase bg-[#005431]/10 px-2 py-0.5 rounded-full">
+                         <span className="material-symbols-outlined text-[12px]">verified</span> Data Verified
+                       </span>
+                    ) : (
+                       <span className="flex items-center gap-1 text-[#ba1a1a] font-bold text-[10px] uppercase bg-[#ba1a1a]/10 px-2 py-0.5 rounded-full">
+                         <span className="material-symbols-outlined text-[12px]">error</span> Unverified / Missing Data
+                       </span>
+                    )}
+                    {msg.aiData.dataSources && msg.aiData.dataSources.length > 0 && (
+                      <span className="text-[10px] text-slate-400">
+                        Source: {msg.aiData.dataSources.join(', ')}
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 <p>{msg.content}</p>
-                {msg.aiData && msg.aiData.actions.length > 0 && (
+
+                {msg.aiData && msg.aiData.missingData && msg.aiData.missingData.length > 0 && (
+                   <p className="mt-2 text-[10px] text-[#ba1a1a] font-bold">
+                     Missing context: {msg.aiData.missingData.join(', ')}
+                   </p>
+                )}
+
+                {msg.aiData && msg.aiData.recommendedActions && msg.aiData.recommendedActions.length > 0 && (
                   <div className="mt-3 pt-2 border-t border-slate-100 flex flex-wrap gap-2">
-                    {msg.aiData.actions.map((act: string, i: number) => (
-                      <span key={i} className="px-2.5 py-1 bg-[#003fad]/10 text-[#003fad] rounded-full font-bold text-[10px]">
-                        {act}
+                    {msg.aiData.recommendedActions.map((act: any, i: number) => (
+                      <span key={i} className="px-2.5 py-1 bg-[#003fad]/10 text-[#003fad] rounded-full font-bold text-[10px] flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[12px]">bolt</span>
+                        {act.action || 'Execute Action'} {act.destination ? `(${act.destination})` : ''}
                       </span>
                     ))}
                   </div>

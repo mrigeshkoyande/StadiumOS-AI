@@ -318,43 +318,69 @@ export function OperationsView() {
               ) : aiAnalysis ? (
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#ba1a1a]/10 text-[#ba1a1a] uppercase">
-                      {aiAnalysis.priority} PRIORITY
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-bold">
-                      Confidence: {(aiAnalysis.confidence * 100).toFixed(0)}%
-                    </span>
+                    {aiAnalysis.verified ? (
+                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#005431]/10 text-[#005431] uppercase flex items-center gap-1">
+                         <span className="material-symbols-outlined text-[12px]">verified</span> DATA VERIFIED
+                       </span>
+                    ) : (
+                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#ba1a1a]/10 text-[#ba1a1a] uppercase flex items-center gap-1">
+                         <span className="material-symbols-outlined text-[12px]">error</span> UNVERIFIED DATA
+                       </span>
+                    )}
+                    {aiAnalysis.confidence > 0 ? (
+                      <span className="text-[10px] text-slate-400 font-bold">
+                        Confidence: {(aiAnalysis.confidence * 100).toFixed(0)}%
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-[#ba1a1a] font-bold">
+                        Confidence Unavailable
+                      </span>
+                    )}
                   </div>
 
-                  <p className="font-bold text-sm text-[#191c1e] leading-snug">
-                    {aiAnalysis.summary}
-                  </p>
+                  {aiAnalysis.dataSources && aiAnalysis.dataSources.length > 0 && (
+                    <div className="text-[10px] text-slate-400 uppercase tracking-wider">
+                      Sources: {aiAnalysis.dataSources.join(', ')}
+                    </div>
+                  )}
 
-                  <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed">
-                    {aiAnalysis.recommendation}
+                  <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-bold">
+                    {aiAnalysis.answer}
                   </div>
 
-                  <div className="space-y-2 pt-2">
-                    <span className="text-[10px] font-bold text-[#4e5f7b] uppercase tracking-wider block">
-                      Recommended Actions
-                    </span>
-                    
-                    <button
-                      onClick={handleAcceptRedirection}
-                      className="w-full py-2.5 px-4 bg-[#003fad] text-white rounded-xl text-xs font-bold shadow-md hover:bg-[#1455d9] transition-all flex items-center justify-center gap-2"
-                    >
-                      <span className="material-symbols-outlined text-sm">check_circle</span>
-                      Accept & Reroute Gate B
-                    </button>
+                  {aiAnalysis.missingData && aiAnalysis.missingData.length > 0 && (
+                     <p className="mt-2 text-[10px] text-[#ba1a1a] font-bold">
+                       Missing Data: {aiAnalysis.missingData.join(', ')}
+                     </p>
+                  )}
 
-                    <button
-                      onClick={handleDeployVolunteers}
-                      className="w-full py-2.5 px-4 glass-panel text-[#003fad] border border-[#003fad]/30 rounded-xl text-xs font-bold hover:bg-white transition-all flex items-center justify-center gap-2"
-                    >
-                      <span className="material-symbols-outlined text-sm">shield</span>
-                      Deploy Gate Volunteers
-                    </button>
-                  </div>
+                  {aiAnalysis.requiresAction && aiAnalysis.recommendedActions && aiAnalysis.recommendedActions.length > 0 && (
+                    <div className="space-y-2 pt-2">
+                      <span className="text-[10px] font-bold text-[#4e5f7b] uppercase tracking-wider block">
+                        Recommended Actions
+                      </span>
+                      
+                      {aiAnalysis.recommendedActions.some(a => (a as any).action === 'redirect_crowd') && (
+                        <button
+                          onClick={handleAcceptRedirection}
+                          className="w-full py-2.5 px-4 bg-[#003fad] text-white rounded-xl text-xs font-bold shadow-md hover:bg-[#1455d9] transition-all flex items-center justify-center gap-2"
+                        >
+                          <span className="material-symbols-outlined text-sm">check_circle</span>
+                          Accept & Reroute Fans
+                        </button>
+                      )}
+
+                      {aiAnalysis.recommendedActions.some(a => (a as any).action === 'deploy_volunteers') && (
+                        <button
+                          onClick={handleDeployVolunteers}
+                          className="w-full py-2.5 px-4 glass-panel text-[#003fad] border border-[#003fad]/30 rounded-xl text-xs font-bold hover:bg-white transition-all flex items-center justify-center gap-2"
+                        >
+                          <span className="material-symbols-outlined text-sm">shield</span>
+                          Deploy Gate Volunteers
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <p className="text-xs text-slate-500">Awaiting data...</p>

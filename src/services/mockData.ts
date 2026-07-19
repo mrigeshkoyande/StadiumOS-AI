@@ -32,12 +32,6 @@ export const mockGateStatus: GateStatus[] = [
   { id: 'gate-d', name: 'Gate D', queueLength: 210, estimatedWaitTime: 8, density: 'medium', trend: 'stable' }
 ];
 
-export const mockTransportStatus: TransportStatus[] = [
-  { id: 'trans-1', type: 'metro', name: 'Metro Line 2', status: 'congested', estimatedWaitTime: 12 },
-  { id: 'trans-2', type: 'shuttle', name: 'Shuttle Hub B', status: 'normal', estimatedWaitTime: 4 },
-  { id: 'trans-3', type: 'bus', name: 'Bus Route 42', status: 'delayed', estimatedWaitTime: 25 }
-];
-
 // Tools that the AI can call
 export const tools = {
   getCrowdDensity: () => JSON.stringify(mockGateStatus),

@@ -12,7 +12,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "start": "node server/index.js"
   },
   "dependencies": {
@@ -47,6 +47,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.160.0",
     "@vitejs/plugin-react": "^6.0.3",
+    "@vitest/coverage-v8": "^4.1.10",
     "autoprefixer": "^10.5.4",
     "jsdom": "^29.1.1",
     "oxlint": "^1.71.0",

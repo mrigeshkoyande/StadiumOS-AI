@@ -13,7 +13,7 @@ interface CameraControllerProps {
  */
 export function CameraController({ focusPosition }: CameraControllerProps) {
   const { camera } = useThree();
-  const controlsRef = useRef<any>(null);
+  const controlsRef = useRef<any>(null); // keeping as any due to three-stdlib types missing locally
   const targetRef = useRef(new THREE.Vector3(0, 0, 0));
   const isAnimating = useRef(false);
 

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 export const ScannerView: React.FC = () => {
   const [ticketInput, setTicketInput] = useState('');
-  const [scanResult, setScanResult] = useState<any>(null);
+  const [scanResult, setScanResult] = useState<{status: string, ticket?: import('../types').Ticket} | null>(null);
   const [isScanning, setIsScanning] = useState(false);
 
   const handleScanSubmit = async (e: React.FormEvent) => {

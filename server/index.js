@@ -19,7 +19,16 @@ const PORT = process.env.PORT || 3001;
 // --- Security Middleware (100% Security Score) ---
 // Helmet helps secure Express apps by setting various HTTP headers.
 app.use(helmet({
-  contentSecurityPolicy: false, // Disabled for local dev/React Three Fiber inline scripts
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      connectSrc: ["'self'", "https://generativelanguage.googleapis.com"]
+    }
+  },
   crossOriginEmbedderPolicy: false,
 }));
 app.use(cors());

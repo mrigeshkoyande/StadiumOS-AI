@@ -66,7 +66,7 @@ export async function askAI(prompt: string, role: 'fan' | 'ops' = 'fan', languag
         "timestamp": "ISO timestamp"
       }
       CRITICAL: You MUST write your text fields ("summary", "recommendation", and "actions") in the following language: ${language}.`,
-      tools: [{ functionDeclarations: functions as any }]
+      tools: [{ functionDeclarations: functions as unknown as import("@google/generative-ai").Tool[] }]
     });
 
     const chat = model.startChat();
@@ -81,7 +81,7 @@ export async function askAI(prompt: string, role: 'fan' | 'ops' = 'fan', languag
         const tool = stadiumTools[toolName];
         let apiResponse;
         if (tool) {
-           apiResponse = (tool as any)(call.args);
+           apiResponse = (tool as (args: unknown) => unknown)(call.args);
         } else {
            apiResponse = JSON.stringify({ error: "Tool not found" });
         }
@@ -95,7 +95,7 @@ export async function askAI(prompt: string, role: 'fan' | 'ops' = 'fan', languag
       });
 
       // Send the tool response back to the model
-      const finalResult = await chat.sendMessage(functionResponses as any);
+      const finalResult = await chat.sendMessage(functionResponses as import("@google/generative-ai").Part[]);
       return parseJsonResponse(finalResult.response.text());
     }
 

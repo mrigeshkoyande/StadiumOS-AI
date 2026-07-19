@@ -22,7 +22,7 @@ interface GateMarkerProps {
  * and an HTML overlay showing live stats.
  */
 export function GateMarker({ gate, position, isSelected, onClick }: GateMarkerProps) {
-  const pulseRef = useRef<any>(null);
+  const pulseRef = useRef<THREE.Mesh>(null);
   const color = DENSITY_COLORS[gate.density] ?? '#10b981';
   const shouldPulse = gate.density === 'high' || gate.density === 'critical';
 

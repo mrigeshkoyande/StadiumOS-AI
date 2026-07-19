@@ -102,6 +102,10 @@ export const LoginDrawer: React.FC = () => {
 
           {/* Drawer */}
           <motion.div 
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="drawer-title"
+            aria-describedby="drawer-desc"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -115,18 +119,20 @@ export const LoginDrawer: React.FC = () => {
               </div>
               <button 
                 onClick={handleClose}
+                aria-label="Close Login Drawer"
+                title="Close Login Drawer"
                 className="p-2 hover:bg-slate-100 rounded-full text-slate-500 transition-colors flex items-center justify-center"
               >
-                <span className="material-symbols-outlined">close</span>
+                <span className="material-symbols-outlined" aria-hidden="true">close</span>
               </button>
             </div>
 
             <div className="p-8 flex-1 overflow-y-auto">
               <div className="mb-8">
-                <h2 className="font-display font-bold text-2xl mb-2 text-[#191c1e]">
+                <h2 id="drawer-title" className="font-display font-bold text-2xl mb-2 text-[#191c1e]">
                   Sign In to Access Layer
                 </h2>
-                <p className="text-xs font-bold text-[#4e5f7b] uppercase tracking-widest">
+                <p id="drawer-desc" className="text-xs font-bold text-[#4e5f7b] uppercase tracking-widest">
                   FIFA World Cup 2026 Authentication Portal
                 </p>
               </div>

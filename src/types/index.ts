@@ -36,7 +36,7 @@ export interface AIResponse {
   confidence: number;
   priority: 'low' | 'medium' | 'high' | 'critical';
   actions: string[];
-  supportingData: any[];
+  supportingData: Record<string, unknown>[];
   timestamp: string;
 }
 
@@ -56,4 +56,43 @@ export interface StadiumState {
   isSimulating: boolean;
   simulationStep: number;
   redirectionActive: boolean;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  role: string;
+  name: string;
+}
+
+export interface Ticket {
+  id: number;
+  user_id: number;
+  match_id: string;
+  seat: string;
+  gate: string;
+  status: string;
+  qr_token: string;
+}
+
+export interface Log {
+  id: number;
+  user_id: number;
+  action: string;
+  timestamp: string;
+  details: string;
+}
+
+export interface Config {
+  [key: string]: string;
+}
+
+export interface Notification {
+  id: number;
+  user_id: number;
+  title: string;
+  message: string;
+  type: string;
+  read_state: number;
+  timestamp: string;
 }

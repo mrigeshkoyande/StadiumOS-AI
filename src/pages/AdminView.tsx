@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 export const AdminView: React.FC = () => {
-  const [logs, setLogs] = useState<any[]>([]);
-  const [usersList, setUsersList] = useState<any[]>([]);
-  const [configData, setConfigData] = useState<any>({});
+  const [logs, setLogs] = useState<import('../types').Log[]>([]);
+  const [usersList, setUsersList] = useState<import('../types').User[]>([]);
+  const [configData, setConfigData] = useState<import('../types').Config>({});
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {

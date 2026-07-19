@@ -4,7 +4,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useNavigate } from 'react-router-dom';
 
 export const FanTicketView: React.FC = () => {
-  const [ticket, setTicket] = useState<any>(null);
+  const [ticket, setTicket] = useState<import('../types').Ticket | null>(null);
   const [showQRModal, setShowQRModal] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const navigate = useNavigate();

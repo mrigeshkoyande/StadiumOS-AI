@@ -18,9 +18,19 @@ A production-quality **Generative AI–powered Stadium Operations and Fan Experi
 - [Security](#security)
 - [Accessibility](#accessibility)
 - [Testing](#testing)
+- [Problem Statement Alignment](#problem-statement-alignment)
 - [Environment Variables](#environment-variables)
 - [Scripts](#scripts)
 - [License](#license)
+
+---
+
+## Problem Statement Alignment
+
+This platform directly solves the **"Stadium operations and fan experience for FIFA World Cup 2026 using Gen AI"** challenge through two core pillars:
+
+1. **Generative AI Fan Experience (The Fan AI Assistant)**: Solves the multilingual, high-stress problem of navigating a foreign stadium by leveraging Google's Gemini Flash AI. The AI translates dynamically, provides personalized 3D pathfinding (e.g., Gate C to Block 112), and suggests low-density food/bathroom routes to eliminate crowd crush.
+2. **AI-Driven Stadium Operations (The Digital Twin)**: Solves the massive logistical challenge of managing 80,000+ fans by providing Operations Directors with a real-time 3D WebGL Digital Twin of the venue. Gemini AI analyzes live telemetry (Gate Density, Wait Times) to automatically reroute security personnel or deploy medical teams proactively rather than reactively.
 
 ---
 

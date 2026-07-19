@@ -5,8 +5,8 @@ export function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [lang, setLang] = useState(() => localStorage.getItem('stadiumos_lang') || 'English');
-  const [user, setUser] = useState<any>(null);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [user, setUser] = useState<import('../../types').User | null>(null);
+  const [notifications, setNotifications] = useState<import('../../types').Notification[]>([]);
   const [showNotifModal, setShowNotifModal] = useState(false);
 
   useEffect(() => {

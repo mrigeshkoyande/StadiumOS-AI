@@ -66,7 +66,7 @@ export function Layout() {
       {/* 1. Side Navigation (Stitch SideNavBar) */}
       <aside className="fixed left-0 top-0 h-screen w-20 border-r border-white/20 bg-white/60 backdrop-blur-xl shadow-[0_8px_32px_rgba(7,26,51,0.08)] flex-col items-center py-6 gap-6 z-50 hidden md:flex">
         <Link to="/" aria-label="Go to Home" className="w-12 h-12 rounded-xl bg-[#003fad]/10 flex items-center justify-center mb-4 text-[#003fad] hover:bg-[#003fad]/20 transition-colors">
-          <span className="material-symbols-outlined text-2xl font-bold">stadium</span>
+          <img src="/logo.png" alt="StadiumOS Logo" className="w-8 h-8 object-contain drop-shadow-md" />
         </Link>
 
         <nav className="flex flex-col gap-6 w-full items-center">

@@ -110,7 +110,7 @@ export const LoginDrawer: React.FC = () => {
           >
             <div className="flex justify-between items-center p-6 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#003fad] text-2xl font-bold">stadium</span>
+                <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
                 <span className="font-display font-bold text-lg text-[#003fad]">StadiumOS AI</span>
               </div>
               <button 

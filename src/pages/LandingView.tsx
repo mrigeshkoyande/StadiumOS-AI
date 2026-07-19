@@ -144,7 +144,7 @@ void main() {
       {/* 2. Top Navigation */}
       <nav className="fixed top-0 right-0 left-0 h-16 z-50 flex justify-between items-center px-6 md:px-10 bg-white/60 backdrop-blur-2xl border-b border-white/20">
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-[#003fad] text-2xl font-bold">stadium</span>
+          <img src="/logo.png" alt="StadiumOS Logo" className="w-10 h-10 object-contain drop-shadow-md" />
           <span className="font-display text-xl font-bold text-[#003fad]">StadiumOS AI</span>
         </div>
         <div className="hidden md:flex gap-8 items-center">

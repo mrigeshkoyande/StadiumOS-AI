@@ -72,7 +72,7 @@ You MUST respond strictly in valid JSON format matching this exact schema:
   "missingData": ["Array of strings describing what data was missing to answer fully, or empty array"]
 }
 CRITICAL: You MUST write your "answer" field in the following language: ${language}.`,
-      tools: [{ functionDeclarations: functions as unknown as import("@google/generative-ai").Tool[] }]
+      tools: [{ functionDeclarations: functions as unknown as import("@google/generative-ai").FunctionDeclaration[] }]
     });
 
     const chat = model.startChat();
